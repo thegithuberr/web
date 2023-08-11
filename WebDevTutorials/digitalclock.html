@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Digital Clock</title>
+<style>
+    body{
+        margin: 0;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        justify-content: center;
+        background: url("https://images.unsplash.com/photo-1511104798669-e37caf0cdd43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80");
+        background-size: cover;
+        overflow: hidden;
+    }
+    h2{
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-size: 14px;
+        text-align: center;
+    }
+    .clock{
+        display: flex;
+    /*    border: white 1px solid;*/
+
+    }
+    .clock div{
+     /*   border: darkblue 1px solid;*/
+        margin: 5px;
+        position: relative;
+    }
+    .clock span{
+        width: 100px;
+        height: 80px;
+        background: rgb(208, 198, 185);
+        opacity: .8;
+        color: white;
+        display: flex; /*by using this we can see the effects of width and height*/
+        justify-content: center ;
+        align-items: center ;
+        font-size: 50px;
+        text-shadow:  2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .clock .text {
+        height: 30px;
+        font-size: 10px;
+        text-transform: uppercase ;
+        letter-spacing: 2px ;
+        background: rgb(159, 121, 96);
+        opacity: .8;
+    }
+    .clock #ampm{
+        bottom: 0;
+        position: absolute;
+        width: 60px;
+        height: 30px;
+        font-size: 20px;
+        background: rgb(45, 26, 13);
+    }
+</style>
+
+</head>
+<body>
+    <h2>Digital Clock</h2>
+    <div class="clock">
+        <div>
+            <span id="hour">00</span> <!-- inline container used to apply styling or target specific parts of a text or inline content-->
+            <span class="text">Hour</span>
+        </div>
+        <div>
+            <span id="minutes">00</span>
+            <span class="text">Minutes</span>
+        </div>
+        <div>
+            <span id="seconds">00</span>
+            <span class="text">Seconds</span>
+        </div>
+        <div>
+            <span id="ampm">AM</span>
+        </div>
+    </div>
+    <script>
+        const hourEl = document.getElementById("hour");
+        const minuteEl = document.getElementById("minutes");
+        const secondsEl = document.getElementById("seconds");
+        const ampmEl = document.getElementById("ampm"); 
+    
+        function updateClock(){
+            let h = new Date().getHours();
+            let m = new Date().getMinutes();
+            let s = new Date().getSeconds();
+            let ampm = "AM";
+    
+            if(h>12){
+                h = h - 12;
+                ampm = "PM";
+            }
+
+            h = h < 10 ? "0" + h : h ;
+            m = m < 10 ? "0" + m : m;
+            s = s < 10 ? "0" + s : s;
+
+            hourEl.innerText = h;
+            minuteEl.innerText = m;
+            secondsEl.innerText = s;
+            ampmEl.innerText = ampm;
+            setTimeout(()=>{
+                updateClock()
+            },1000 )
+        }
+        updateClock();
+    </script>
+</body>
+</html>

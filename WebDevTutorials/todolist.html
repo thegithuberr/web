@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        body{
+            height: 100vh;
+            background: linear-gradient(#C5ADC5 50%, #c4c4bc 50%);
+        }
+        .app{
+          /*  border: 0.5px black solid;*/
+            width: min(95vw,31.25em);
+            position: absolute;
+            margin: auto;
+            left: 0;
+            right: 0;
+            top: 1.875em;
+        }
+        .container{
+        /*    border: 0.5px pink solid; */
+            padding: 2em 2.5em;
+            background-color: #f1f8fb;
+            box-shadow: 0 1em 2em rgba(0, 0, 0, 0.3);
+            border-radius: 0.8em;
+        }
+        #wrapper{
+            /*border: 0.5px gray solid;*/
+            position: relative;
+            display: grid;
+            grid-template-columns: 8fr 4fr ;
+            gap: 1em;
+        }
+        #wrapper input{
+            width: 100%;
+            background-color: transparent;
+            color: #111111;
+            border: none;
+            font-size: 0.9em;
+            border-bottom: 2px solid #d1d3d4;
+            padding: 1em 0.5em;
+        }
+        #wrapper input:focus{
+            outline: none;
+            border-color: #C5ADC5;
+        }
+        #wrapper button{
+            position: relative;
+            border-radius: 0.5em;
+            font-weight: 500;
+            font-size: 1em;
+            background-color: #aaabab;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+        }
+        #tasks {
+            margin-top: 1em;
+            border-radius: 0.5em;
+            width: 100%;
+            position: relative;
+            padding: 1em 0.5em;
+        }
+        .task{
+            background-color: #e6d9e6;
+            padding: 0.8em 1em;
+            display: grid;
+            grid-template-columns: 1fr 8fr 2fr ;
+            gap: 1em;
+            border-radius: 0.5em;
+            box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.05);
+            align-items: center;
+            cursor: pointer;
+        }     
+        .task:not(:first-child){
+            margin-top: 1em;
+        }
+        .task input[type="checkbox"]{
+            position: relative;
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            border: 2px solid #645c5c;
+            background-color: white;
+        }
+        .task input[type="checkbox"]:before {
+            content: "";
+            position: absolute;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+        }
+        .task input[type="checkbox"]:checked{
+            background-color: #5a95ff;
+            border-color: #5a95ff ;
+        }
+        .task input[type="checkbox"]:checked:before{
+            position: absolute;
+            content: "\f00c";
+            color: #ffffff;
+            font-size: 0.8em;
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
+        .task span {
+            font: 0.9em;
+            font-weight: 400;
+            word-break: break-all;
+        }
+        .task button {
+            color: #ffffff;
+            width: 100%;
+            padding: 1em 0;
+            border-radius: 0.5em;
+            border: none;
+            cursor: pointer;
+            outline: none;
+        }
+        .delete{
+            background-color: #ff5c5c;
+        }
+        #pending-tasks span{
+            color: #5a95ff;
+        }
+        .completed{
+            text-decoration: line-through;
+            color: #ff5c5c;
+        }
+        #error{
+            text-align: center;
+            background-color: #ffffff;
+            color: #ff5c5c;
+            margin-top: 1.5em;
+            padding: 1em 0;
+            border-radius: 0.8em;
+            display: none ;
+        }
+    </style>
+</head>
+<body>
+   <div class="app">
+    <div class="container">
+        <div id="wrapper">
+            <input type="text" placeholder="Enter Task Here">
+            <button id="add-btn">Add</button>
+        </div>
+        <div id="tasks">
+            <p id="pending-tasks">You have <span class="count-value">0</span> task(s) to complete.</p>
+        </div>
+    </div>
+    <p id="error">Input cannot be empty!</p>
+   </div>
+
+    <script> 
+//the querySelector method is used to select and retrieve elements from the HTML document based on a CSS selector
+        const addBtn = document.querySelector("#add-btn");
+        const newTaskInput = document.querySelector("#wrapper input");
+        const tasksContainer = document.querySelector("#tasks");
+        const error = document.getElementById("error");
+        const countValue = document.querySelector(".count-value");
+        let taskCount = 0;
+        const displayCount = (taskCount) => {
+            countValue .innerText = taskCount;
+        };
+        const addTask = () => {
+            const taskName = newTaskInput.value.trim();
+            error.style.display = "none";
+            if(!taskName){
+                setTimeout(() => {
+                    error.style.display = "block";
+                }, 200);
+                return;
+            }
+            const task = `<div class="task">
+                <input type="checkbox" class="task-check">
+                <span class="taskname">${taskName}</span>
+
+                <button class="delete">
+                <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>`;
+            
+            tasksContainer.insertAdjacentHTML("beforeend", task);
+
+            const deleteButtons = document.querySelectorAll(".delete");
+            deleteButtons.forEach((button) => {
+                button.onclick = () =>{
+                    const confirmed = confirm("Are you sure you want to delete? This action cannot be undone.");
+                    if(confirmed){ 
+                    button.parentNode.remove();
+                    taskCount -= 1;
+                    displayCount(taskCount);
+                    }
+                };
+            });
+            const editButtons = document.querySelectorAll(".edit");
+            editButtons.forEach((editBtn) => {
+                editBtn.onclick = (e) => {
+                    let targetElement = e.target;
+                    if(!(e.target.className =="edit")){
+                        targetElement = e.target.parentElement;
+                    }
+                    newTaskInput.value = targetElement.previousElementSibling?.innerText;
+                    targetElement.parentNode.remove();
+                    taskCount -= 1;
+                    displayCount(taskCount);
+                };
+            });
+            const tasksCheck = document.querySelectorAll(".task-check");
+            tasksCheck.forEach((checkBox)=> {
+                checkBox.onchange = () => {
+                    checkBox.nextElementSibling.classList.toggle("completed");
+                    if(checkBox.checked){
+                        taskCount -= 1;
+                    } else {
+                        taskCount += 1;
+                    }
+                    displayCount(taskCount);
+                };
+            });
+            taskCount += 1; 
+            displayCount(taskCount);
+            newTaskInput.value = "";
+        };
+        addBtn.addEventListener("click", addTask);
+
+        window.onload = () => {
+            taskCount = 0;
+            displayCount(taskCount);
+            newTaskInput.value = "";
+        }
+    </script> 
+
+</body>
+</html>
